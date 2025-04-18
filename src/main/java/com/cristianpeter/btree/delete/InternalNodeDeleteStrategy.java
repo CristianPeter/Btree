@@ -1,18 +1,19 @@
 package com.cristianpeter.btree.delete;
 
-import com.cristianpeter.btree.core.BTreeNode;
-import com.cristianpeter.btree.exceptions.KeyNotFoundException;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Optional;
 import java.util.function.Function;
 
-public class InternalNodeDeleteStrategy extends DeleteStrategy{
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
-   public boolean deleteImpl(BTreeNode node, int key) throws KeyNotFoundException {
-       return this.balanceTree(node, key);
-   }
+import com.cristianpeter.btree.core.BTreeNode;
+import com.cristianpeter.btree.exceptions.KeyNotFoundException;
+
+public class InternalNodeDeleteStrategy extends DeleteStrategy {
+
+    public boolean deleteImpl(BTreeNode node, int key) throws KeyNotFoundException {
+        return this.balanceTree(node, key);
+    }
 
     @Override
     public boolean borrowSiblingImpl(BTreeNode node, int key) throws KeyNotFoundException {
@@ -21,14 +22,14 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy{
 
     @Override
     public boolean mergeSiblingsImpl(BTreeNode node, int key) throws KeyNotFoundException {
-       return this.mergeSiblings(node, key);
+        return this.mergeSiblings(node, key);
     }
-
 
     /**
      * Will return the node with maximum key in the left subtree or node with minimum key in right subtree
      * key - 1 will return the node with maximum value in left subtree (recursive)
      * key + 1 will return the node with minimum key in right subtree (recursive)
+     * 
      * @param node
      * @param key
      * @return
@@ -36,17 +37,13 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy{
     @Override
     public Optional<Pair<BTreeNode, Function<BTreeNode, Integer>>> lendKeyProvider(BTreeNode node, int key) {
 
-       BTreeNode leftSibling = node.greaterLSB(key - 1).orElse(null);
-       BTreeNode rightSibling = node.lowerRSB(key + 1).orElse(null);
+        BTreeNode leftSibling = node.greaterLSB(key - 1).orElse(null);
+        BTreeNode rightSibling = node.lowerRSB(key + 1).orElse(null);
 
         if (leftSibling != null && leftSibling.canLendKey()) {
-            return Optional.of(ImmutablePair.of(
-                    leftSibling, BTreeNode::removeGreaterKey)
-            );
+            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeGreaterKey));
         } else if (rightSibling != null && rightSibling.canLendKey()) {
-            return Optional.of(ImmutablePair.of(
-                    rightSibling, BTreeNode::removeLowerKey)
-            );
+            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeLowerKey));
         } else {
             return Optional.empty();
         }
@@ -70,10 +67,9 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy{
     }
 
     private boolean mergeSiblings(BTreeNode node, int key) throws KeyNotFoundException {
-       int rightChild = node.getNextIndexByKey(key);
-       BTreeNode leftChildNode = node.getChild(rightChild - 1);
-       BTreeNode rightChildNode = node.getChild(rightChild);
-
+        int rightChild = node.getNextIndexByKey(key);
+        BTreeNode leftChildNode = node.getChild(rightChild - 1);
+        BTreeNode rightChildNode = node.getChild(rightChild);
 
         leftChildNode.mergeKeys(rightChildNode.getKeys());
 
@@ -82,8 +78,7 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy{
 
         // remove the key from the node
         node.removeByKey(key);
-       return true;
+        return true;
     }
-
 
 }

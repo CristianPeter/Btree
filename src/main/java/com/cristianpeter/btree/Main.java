@@ -87,6 +87,7 @@ public class Main {
 
         tree.delete(30);
     }
+
     // internal node - right subtree borrow key
     private static void testCase5(BTree tree) throws NodeNotFoundException, KeyNotFoundException {
         tree.add(20);
@@ -103,7 +104,6 @@ public class Main {
         tree.add(31);
         tree.add(32);
         tree.add(70);
-
 
         tree.delete(50);
     }
@@ -124,7 +124,5 @@ public class Main {
 
         tree.delete(10);
     }
-
-
 
 }

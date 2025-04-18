@@ -1,4 +1,4 @@
 package com.cristianpeter.btree.exceptions;
 
-public class NotFoundSiblingNodeException extends Exception{
+public class NotFoundSiblingNodeException extends Exception {
 }

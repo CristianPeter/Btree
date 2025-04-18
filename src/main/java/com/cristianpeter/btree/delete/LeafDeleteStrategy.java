@@ -1,12 +1,13 @@
 package com.cristianpeter.btree.delete;
 
-import com.cristianpeter.btree.core.BTreeNode;
-import com.cristianpeter.btree.exceptions.KeyNotFoundException;
+import java.util.Optional;
+import java.util.function.Function;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Optional;
-import java.util.function.Function;
+import com.cristianpeter.btree.core.BTreeNode;
+import com.cristianpeter.btree.exceptions.KeyNotFoundException;
 
 public class LeafDeleteStrategy extends DeleteStrategy {
 
@@ -14,7 +15,7 @@ public class LeafDeleteStrategy extends DeleteStrategy {
         // first remove the key
         node.removeByKey(key);
         // balance tree if needed
-        if (node.keysUnderflowing()){
+        if (node.keysUnderflowing()) {
             return this.balanceTree(node, key);
         }
         return false;
@@ -35,18 +36,13 @@ public class LeafDeleteStrategy extends DeleteStrategy {
         BTreeNode rightSibling = node.rightSibling();
 
         if (leftSibling != null) {
-            return Optional.of(ImmutablePair.of(
-                    leftSibling, BTreeNode::removeGreaterKey)
-            );
+            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeGreaterKey));
         } else if (rightSibling != null) {
-            return Optional.of(ImmutablePair.of(
-                    rightSibling, BTreeNode::removeLowerKey)
-            );
+            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeLowerKey));
         } else {
             return Optional.empty();
         }
     }
-
 
     private boolean borrowSibling(BTreeNode node, int key) throws KeyNotFoundException {
         Pair<BTreeNode, Function<BTreeNode, Integer>> pair = this.lendKeyProvider(node, key).orElse(null);
@@ -59,7 +55,7 @@ public class LeafDeleteStrategy extends DeleteStrategy {
             // add key from de sibling to the parent
             node.getParent().addKey(lendKey);
 
-            if (! node.isLeaf()){
+            if (!node.isLeaf()) {
                 int index = pair.getLeft().safeChildrenIndex(pair.getLeft().getNextIndexByKey(lendKey) + 1);
                 BTreeNode rightChild = pair.getLeft().getChild(index);
                 // remove reference cause right child will be moved to left side of current node
@@ -72,11 +68,10 @@ public class LeafDeleteStrategy extends DeleteStrategy {
         return false;
 
     }
+
     protected boolean mergeSiblings(BTreeNode node, int key) throws KeyNotFoundException {
         // merge this node with the right or left sibling if exists
-        BTreeNode sibling = this.lendKeyProvider(node, key)
-                .map(Pair::getLeft)
-                .orElseThrow(RuntimeException::new);
+        BTreeNode sibling = this.lendKeyProvider(node, key).map(Pair::getLeft).orElseThrow(RuntimeException::new);
 
         sibling.mergeKeys(node.getKeys());
 
@@ -90,5 +85,3 @@ public class LeafDeleteStrategy extends DeleteStrategy {
     }
 
 }
-
-

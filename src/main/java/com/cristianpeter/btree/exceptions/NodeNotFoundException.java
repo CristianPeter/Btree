@@ -1,4 +1,4 @@
 package com.cristianpeter.btree.exceptions;
 
-public class NodeNotFoundException extends Exception{
+public class NodeNotFoundException extends Exception {
 }

@@ -1,4 +1,4 @@
 package com.cristianpeter.btree.exceptions;
 
-public class KeyNotFoundException extends Exception{
+public class KeyNotFoundException extends Exception {
 }

@@ -1,0 +1,12 @@
+.DS_Store
+.idea
+target
+*.class
+deps
+*.iml
+*.sh
+.classpath
+.project
+.settings
+src/main/resources/application.conf
+src/main/resources/platforms.txt
