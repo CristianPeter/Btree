@@ -67,6 +67,10 @@ public class BTreeNode {
      *            the new node
      */
     public void addChild(int index, BTreeNode child) {
+        if (child == null) {
+            return;
+        }
+
         if (children[index] != null) {
             newChildCarryingToRight(this, index, child);
             return;

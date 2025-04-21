@@ -35,6 +35,15 @@
       <version>3.17.0</version>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-params -->
+    <!-- For parameterized tests -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>5.13.0-M2</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
   <build>
     <directory>${project.basedir}/target</directory>
