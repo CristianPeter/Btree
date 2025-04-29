@@ -36,9 +36,9 @@ public class LeafDeleteStrategy extends DeleteStrategy {
         BTreeNode rightSibling = node.rightSibling();
 
         if (leftSibling != null) {
-            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeGreaterKey));
+            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeLastKey));
         } else if (rightSibling != null) {
-            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeLowerKey));
+            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeFirstKey));
         } else {
             return Optional.empty();
         }
@@ -59,7 +59,7 @@ public class LeafDeleteStrategy extends DeleteStrategy {
                 int index = pair.getLeft().safeChildrenIndex(pair.getLeft().getNextIndexByKey(lendKey) + 1);
                 BTreeNode rightChild = pair.getLeft().getChild(index);
                 // remove reference cause right child will be moved to left side of current node
-                pair.getLeft().removeChild(index);
+                pair.getLeft().removeChildByIndex(index);
                 node.addChild(0, rightChild);
             }
 
@@ -80,7 +80,7 @@ public class LeafDeleteStrategy extends DeleteStrategy {
         borrowParentKeyToChild(sibling);
 
         // remove from parent the node reference that is going to disappear
-        node.getParent().removeChild(node);
+        node.getParent().removeChildByNode(node);
         return true;
     }
 

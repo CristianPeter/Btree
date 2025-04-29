@@ -134,7 +134,7 @@ public class BTreeNode {
 
     public BTreeNode getChild(int index) {
         // control index out of bounds
-        if (index < 0 || index > children.length)
+        if (index < 0 || index >= children.length)
             return null;
         return children[index];
     }
@@ -143,11 +143,11 @@ public class BTreeNode {
      * Return the index of the node in children array
      */
     public int getChildIndex(BTreeNode node) {
-        for (int i = 0; i < keysSize; i++) {
+        for (int i = 0; i < this.children.length; i++) {
             if (getChild(i) == node)
                 return i;
         }
-        return keysSize;
+        return this.childrenSize;
     }
 
     /**
@@ -196,12 +196,16 @@ public class BTreeNode {
      * Will change parent reference to new node
      * Will increase also childrenSize
      */
-    public void mergeChildren(BTreeNode[] nodes, BTreeNode parent) {
+    public void mergeChildren(BTreeNode[] nodes) {
         for (BTreeNode node : nodes) {
-            node.parent = parent;
+            changeNodeParent(node, this);
             children[childrenSize] = node;
             childrenSize++;
         }
+    }
+
+    private void changeNodeParent(BTreeNode current, BTreeNode parent) {
+        current.parent = parent;
     }
 
     /**
@@ -295,14 +299,14 @@ public class BTreeNode {
         return this.childrenSize == 0;
     }
 
-    public int removeLowerKey() {
+    public int removeFirstKey() {
         int first = keys[0];
         keys = Arrays.copyOfRange(keys, 1, keys.length);
         keysSize--;
         return first;
     }
 
-    public int removeGreaterKey() {
+    public int removeLastKey() {
         int lastIndexWithValue = keysSize - 1;
         int last = keys[lastIndexWithValue];
         keys[lastIndexWithValue] = 0;
@@ -333,12 +337,12 @@ public class BTreeNode {
     /**
      * Remove a child reference at index position
      */
-    public void removeChild(int index) {
+    public void removeChildByIndex(int index) {
         children[index] = null;
         childrenSize--;
     }
 
-    public void removeChild(BTreeNode node) {
+    public void removeChildByNode(BTreeNode node) {
         children[this.getChildIndex(node)] = null;
         childrenSize--;
     }
@@ -347,7 +351,7 @@ public class BTreeNode {
      * Move all keys with value of 0 to the end
      * All positions with 0 means not value present
      */
-    public void reorganizekeys() {
+    private void reorganizekeys() {
         // move all values greater than 0 to first positions
         int index = 0;
         for (int i = 0; i < keys.length; i++) {
@@ -393,7 +397,7 @@ public class BTreeNode {
     }
 
     private String currentKeysAsString() {
-        return Arrays.stream(getKeys()).filter(key -> key != 0).mapToObj(String::valueOf).collect(Collectors.joining(" -> "));
+        return Arrays.stream(this.keys).filter(key -> key != 0).mapToObj(String::valueOf).collect(Collectors.joining(" -> "));
     }
 
     public String preOrder() {
@@ -403,7 +407,7 @@ public class BTreeNode {
         result.add(currentKeysAsString());
 
         // child keys
-        for (BTreeNode child : getChildren()) {
+        for (BTreeNode child : this.children) {
             if (child != null) {
                 result.add(child.preOrder());
             }
@@ -416,7 +420,7 @@ public class BTreeNode {
         List<String> result = new ArrayList<>();
 
         // child keys
-        for (BTreeNode child : getChildren()) {
+        for (BTreeNode child : this.children) {
             if (child != null) {
                 result.add(child.postOrder());
             }
@@ -434,7 +438,7 @@ public class BTreeNode {
     public String inOrder() {
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < getKeys().length; i++) {
+        for (int i = 0; i < this.keys.length; i++) {
             // left child
             BTreeNode leftChild = getChild(i);
             if (leftChild != null) {

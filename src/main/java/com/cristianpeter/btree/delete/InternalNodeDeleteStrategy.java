@@ -41,9 +41,9 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy {
         BTreeNode rightSibling = node.lowerRSB(key + 1).orElse(null);
 
         if (leftSibling != null && leftSibling.canLendKey()) {
-            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeGreaterKey));
+            return Optional.of(ImmutablePair.of(leftSibling, BTreeNode::removeLastKey));
         } else if (rightSibling != null && rightSibling.canLendKey()) {
-            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeLowerKey));
+            return Optional.of(ImmutablePair.of(rightSibling, BTreeNode::removeFirstKey));
         } else {
             return Optional.empty();
         }
@@ -74,7 +74,7 @@ public class InternalNodeDeleteStrategy extends DeleteStrategy {
         leftChildNode.mergeKeys(rightChildNode.getKeys());
 
         // remove the right child from the inner node
-        node.removeChild(node.getChildIndex(rightChildNode));
+        node.removeChildByIndex(node.getChildIndex(rightChildNode));
 
         // remove the key from the node
         node.removeByKey(key);

@@ -76,7 +76,7 @@ public class BTree implements IBTree {
         // we must get all the right children of the pivot and assign them to the right node
         Optional<BTreeNode[]> rightNodes = leftNode.getChildrenRange(pivotIndex + 1, leftNode.getChildrenSize());
 
-        rightNodes.ifPresent(nodes -> rightNode.mergeChildren(nodes, rightNode));
+        rightNodes.ifPresent(rightNode::mergeChildren);
 
         // we maintain left the node, and clear the pivot, the right values and right children
         cleanNode(leftNode, pivotIndex, leftNode.getKeysSize());
@@ -114,7 +114,7 @@ public class BTree implements IBTree {
             // 0 represents empty value
             node.removeByIndex(startIndex);
             if (node.getChild(startIndex + 1) != null) {
-                node.removeChild(startIndex + 1);
+                node.removeChildByIndex(startIndex + 1);
             }
         }
     }
