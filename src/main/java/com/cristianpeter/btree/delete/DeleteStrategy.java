@@ -56,7 +56,7 @@ public abstract class DeleteStrategy {
     private boolean executeInOrder(List<ExceptionalBiPredicate<BTreeNode, Integer>> methods, BTreeNode node, int key)
             throws KeyNotFoundException {
         for (ExceptionalBiPredicate<BTreeNode, Integer> method : methods) {
-            if (Boolean.TRUE.equals(method.test(node, key))) {
+            if (method.test(node, key)) {
                 return true;
             }
         }
